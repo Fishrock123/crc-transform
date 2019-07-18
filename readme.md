@@ -1,29 +1,38 @@
-# FS Source (BOB)
+# CRC Transform (BOB)
 
-A file system source for the [BOB](https://github.com/Fishrock123/bob) streaming protocol.
+A [Cyclic Redundancy Check](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) Transform for the [BOB](https://github.com/Fishrock123/bob) streaming protocol.
 
 ## Usage
 
 ```js
-const FileSource = require('fs-source')
-new FileSource(path, options)
+const CRC = require('crc-transform')
+new CRC(Buffer.alloc(size))
 ```
 
-Implements a [BOB source](https://github.com/Fishrock123/bob/blob/master/reference-source.js) from files.
+Implements a [BOB transform](https://github.com/Fishrock123/bob/blob/master/reference-buffered-transform.js) which uses the [crc](https://www.npmjs.com/package/crc) library to compute a 32-bit crc.
 
 ### Example
 
 ```js
+const CRC = require('crc-transform')
+
+const {
+  Stream,
+  StdoutSink
+} = require('bob-streams')
 const FileSource = require('fs-source')
 
-const source = new FileSource('my-file')
-const sink = new MyBOBSink()
+const source = new FileSource(process.argv[2])
+const sink = new StdoutSink('hex')
 
-sink.bindSource(source, error => {
-  if (error)
-    console.error('Stream returned error ->', error.stack)
-  else {
-    console.log('ok')
+const stream = new Stream(
+  source,
+  new CRC(Buffer.alloc(64 * 1024)),
+  sink
+)
+stream.start(error => {
+  if (error) {
+    console.error('Stream error ->', error)
   }
 })
 ```
