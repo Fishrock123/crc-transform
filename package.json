@@ -29,8 +29,7 @@
   },
   "homepage": "https://github.com/Fishrock123/bob",
   "dependencies": {
-    "bob-status": "0.0.0",
-    "bob-streams": "0.2.4",
+    "bob-streams": "^0.4.2",
     "crc": "^3.8.0"
   },
   "devDependencies": {

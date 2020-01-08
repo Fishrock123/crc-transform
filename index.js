@@ -1,6 +1,6 @@
 'use strict'
 
-const status_type = require('bob-status') // eslint-disable-line camelcase
+const { Status } = require('bob-streams')
 
 const { crc32 } = require('crc')
 
@@ -25,13 +25,13 @@ class CRCTransform {
   }
 
   next (status, error, buffer, bytes) {
-    if (status === status_type.error || error !== null) {
-      return this.sink.next(status_type.error, error)
+    if (status === Status.error || error !== null) {
+      return this.sink.next(Status.error, error)
     }
 
     this.crc = crc32(buffer.slice(0, bytes), this.crc)
 
-    if (status === status_type.end) {
+    if (status === Status.end) {
       this.sink.next(status, error, Buffer.from(this.crc.toString(16), 'hex'), 4)
     } else {
       this.source.pull(null, this.buf)
